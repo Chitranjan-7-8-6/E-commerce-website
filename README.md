@@ -10,7 +10,7 @@ AuraTech is a lightning-fast, highly responsive e-commerce frontend built entire
    
 2. **Frictionless Checkout:** Includes a seamless guest checkout process designed to boost user conversions.
    
-**3. Instant Performance:** Guarantees lightning-fast load times and intuitive navigation for everyday users.
+3. **Instant Performance:** Guarantees lightning-fast load times and intuitive navigation for everyday users.
 
 **Technical Highlights :**
 
