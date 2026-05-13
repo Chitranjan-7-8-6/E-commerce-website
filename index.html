@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura Tech | Premium Electronics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Smooth scrolling for anchor links */
+        html { scroll-behavior: smooth; }
+        /* Hide scrollbar for a cleaner look in the cart modal */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 relative">
+
+    <nav class="bg-white/90 backdrop-blur-md shadow-sm fixed w-full z-40 top-0 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <span class="font-extrabold text-2xl tracking-tighter text-indigo-600">AURA</span><span class="font-light text-2xl tracking-widest text-slate-900">TECH</span>
+                </div>
+                <div>
+                    <button onclick="toggleCart()" class="relative bg-indigo-600 text-white px-5 py-2 rounded-full font-semibold hover:bg-indigo-700 transition shadow-md flex items-center gap-2">
+                        <span>Cart</span>
+                        <span id="cart-count" class="bg-white text-indigo-600 rounded-full h-6 w-6 flex items-center justify-center text-xs font-bold">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="pt-24 pb-12 sm:pt-32 sm:pb-16 lg:pb-24 overflow-hidden relative bg-slate-900 text-white">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-900 to-slate-900 opacity-90 z-0"></div>
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6">
+                Elevate Your <span class="text-indigo-400">Digital Life.</span>
+            </h1>
+            <p class="mt-4 max-w-2xl text-lg sm:text-xl mx-auto text-slate-300 mb-10">
+                Experience the next generation of premium electronics. No accounts required. Seamless checkout. Just pure innovation delivered to your door.
+            </p>
+            <a href="#products" class="inline-block bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                Shop the Collection
+            </a>
+        </div>
+    </header>
+
+    <main id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Featured Products</h2>
+            <p class="mt-4 text-lg text-slate-500">Curated tech for the modern lifestyle.</p>
+        </div>
+        
+        <div id="product-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-12 py-8 text-center">
+        <p class="text-slate-500">&copy; 2026 AuraTech Inc. Designed for seamless shopping.</p>
+    </footer>
+
+    <div id="cart-panel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-gray-100">
+            <h2 class="text-2xl font-bold">Your Cart</h2>
+            <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-800 text-2xl focus:outline-none">&times;</button>
+        </div>
+        
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+            <div class="text-center text-gray-500 mt-10" id="empty-cart-msg">Your cart is empty.</div>
+        </div>
+
+        <div class="p-6 border-t border-gray-100 bg-gray-50">
+            <div class="flex justify-between text-lg font-bold mb-4">
+                <span>Total</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button onclick="openCheckout()" id="checkout-btn" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Proceed to Checkout
+            </button>
+        </div>
+    </div>
+
+    <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden transition-opacity" onclick="closeAllModals()"></div>
+
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-xl font-bold">Guest Checkout</h3>
+                <button onclick="closeAllModals()" class="text-gray-400 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div class="p-6">
+                <form id="checkout-form" onsubmit="processOrder(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <input type="text" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition" placeholder="John Doe">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                            <input type="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition" placeholder="john@example.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
+                            <input type="text" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition" placeholder="123 Tech Street, City, ZIP">
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Card Details (Mock)</label>
+                            <input type="text" required class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-2 focus:ring-2 focus:ring-indigo-600 outline-none" placeholder="0000 0000 0000 0000">
+                            <div class="flex gap-2">
+                                <input type="text" required class="w-1/2 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600 outline-none" placeholder="MM/YY">
+                                <input type="text" required class="w-1/2 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-600 outline-none" placeholder="CVC">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-900 text-white mt-6 py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition flex justify-center items-center gap-2">
+                        Pay <span id="checkout-total-display"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-8 text-center text-slate-800">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-green-500 text-3xl font-bold">✓</div>
+            <h3 class="text-2xl font-bold mb-2">Order Confirmed!</h3>
+            <p class="text-slate-500 mb-6">Thank you for your purchase. Your items will be shipped shortly.</p>
+            <button onclick="closeAllModals()" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DATA (Products Array) ---
+        const products = [
+            { id: 1, name: 'Aura Pro ANC Headphones', price: 249.99, desc: 'Studio quality sound with active noise cancellation.', imgEmoji: '🎧', color: 'bg-blue-100' },
+            { id: 2, name: 'Nova Smartwatch', price: 199.00, desc: 'Track vitals, receive notifications, stay connected.', imgEmoji: '⌚', color: 'bg-slate-100' },
+            { id: 3, name: 'ErgoMech Keyboard', price: 129.50, desc: 'Mechanical precision for developers and gamers.', imgEmoji: '⌨️', color: 'bg-purple-100' },
+            { id: 4, name: 'Lumina 4K Webcam', price: 89.99, desc: 'Crystal clear video for professional meetings.', imgEmoji: '📹', color: 'bg-rose-100' },
+            { id: 5, name: 'Aero Wireless Mouse', price: 59.00, desc: 'Ultralight design with sub-millisecond latency.', imgEmoji: '🖱️', color: 'bg-orange-100' },
+            { id: 6, name: 'Zenith Pods', price: 149.99, desc: 'True wireless earbuds with spatial audio.', imgEmoji: '🔋', color: 'bg-teal-100' },
+            { id: 7, name: 'ChargePad Pro', price: 45.00, desc: 'Fast 15W wireless charging station.', imgEmoji: '⚡', color: 'bg-yellow-100' },
+            { id: 8, name: 'Nexus Smart Speaker', price: 110.00, desc: 'Voice-controlled home assistant with rich bass.', imgEmoji: '🔊', color: 'bg-red-100' }
+        ];
+
+        let cart = []; // Holds cart items
+
+        // --- 2. RENDER PRODUCTS TO UI ---
+        const productContainer = document.getElementById('product-container');
+        
+        function renderProducts() {
+            productContainer.innerHTML = '';
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden flex flex-col';
+                card.innerHTML = `
+                    <div class="h-48 ${product.color} flex items-center justify-center text-6xl group">
+                        <span class="group-hover:scale-110 transition-transform duration-300">${product.imgEmoji}</span>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-lg font-bold text-slate-900">${product.name}</h3>
+                        <p class="text-sm text-slate-500 mt-2 flex-1">${product.desc}</p>
+                        <div class="mt-4 flex items-center justify-between">
+                            <span class="text-xl font-extrabold text-indigo-600">$${product.price.toFixed(2)}</span>
+                            <button onclick="addToCart(${product.id})" class="bg-slate-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-indigo-600 transition-colors">
+                                Add +
+                            </button>
+                        </div>
+                    </div>
+                `;
+                productContainer.appendChild(card);
+            });
+        }
+
+        // --- 3. CART LOGIC ---
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            updateCartUI();
+            
+            // Visual feedback on the cart button
+            const cartBtn = document.getElementById('cart-count');
+            cartBtn.classList.add('scale-150', 'bg-red-500', 'text-white');
+            setTimeout(() => {
+                cartBtn.classList.remove('scale-150', 'bg-red-500', 'text-white');
+            }, 300);
+        }
+
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCartUI();
+        }
+
+        function updateQuantity(productId, delta) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) removeFromCart(productId);
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartCountElement = document.getElementById('cart-count');
+            const cartTotalElement = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+
+            // Update Count
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCountElement.innerText = totalItems;
+
+            // Update Total Price
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const formattedTotal = `$${totalPrice.toFixed(2)}`;
+            cartTotalElement.innerText = formattedTotal;
+            document.getElementById('checkout-total-display').innerText = formattedTotal;
+
+            // Render Items
+            cartItemsContainer.innerHTML = '';
+            if (cart.length === 0) {
+                cartItemsContainer.appendChild(emptyMsg);
+                emptyMsg.style.display = 'block';
+                checkoutBtn.disabled = true;
+            } else {
+                emptyMsg.style.display = 'none';
+                checkoutBtn.disabled = false;
+                
+                cart.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex items-center justify-between border-b border-gray-100 pb-4';
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center gap-3 w-2/3">
+                            <div class="w-12 h-12 ${item.color} rounded-md flex items-center justify-center text-xl">${item.imgEmoji}</div>
+                            <div>
+                                <h4 class="text-sm font-bold truncate">${item.name}</h4>
+                                <p class="text-xs text-indigo-600 font-semibold">$${item.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="text-gray-500 hover:text-gray-900 px-1 font-bold">-</button>
+                            <span class="text-sm font-bold w-4 text-center">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="text-gray-500 hover:text-gray-900 px-1 font-bold">+</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(itemDiv);
+                });
+            }
+        }
+
+        // --- 4. UI MODAL TOGGLES ---
+        const cartPanel = document.getElementById('cart-panel');
+        const overlay = document.getElementById('overlay');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const successModal = document.getElementById('success-modal');
+
+        function toggleCart() {
+            const isClosed = cartPanel.classList.contains('translate-x-full');
+            if (isClosed) {
+                cartPanel.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            } else {
+                cartPanel.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function openCheckout() {
+            cartPanel.classList.add('translate-x-full'); // Hide cart
+            checkoutModal.classList.remove('hidden');
+            // Scale in animation
+            setTimeout(() => checkoutModal.querySelector('div').classList.remove('scale-95'), 10);
+        }
+
+        function closeAllModals() {
+            cartPanel.classList.add('translate-x-full');
+            checkoutModal.classList.add('hidden');
+            checkoutModal.querySelector('div').classList.add('scale-95');
+            successModal.classList.add('hidden');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // --- 5. CHECKOUT PROCESSING ---
+        function processOrder(e) {
+            e.preventDefault(); // Prevent form from refreshing the page
+            
+            // Mock processing delay for realism
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `Processing...`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // Clear cart
+                cart = [];
+                updateCartUI();
+                e.target.reset(); // Reset form fields
+                
+                // Swap modals
+                checkoutModal.classList.add('hidden');
+                checkoutModal.querySelector('div').classList.add('scale-95');
+                successModal.classList.remove('hidden');
+                
+                // Reset button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        // --- 6. INITIALIZATION ---
+        renderProducts();
+        updateCartUI();
+
+    </script>
+</body>
+</html>
